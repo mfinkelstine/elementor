@@ -1,0 +1,54 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "elementor-flask.name" . }}
+  labels:
+    {{- include "elementor-flask.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.deployment.replicaCount }}
+  selector:
+    matchLabels:
+      {{- include "elementor-flask.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "elementor-flask.selectorLabels" . | nindent 8 }}
+    spec:
+      serviceAccountName: {{ include "elementor-flask.name" . }}
+      containers:
+        - name: {{ .Chart.Name }}
+          image: "{{ .Values.deployment.container.image.repository }}"
+          imagePullPolicy: {{ .Values.deployment.container.image.pullPolicy }}
+          ports:
+            - name: http
+              containerPort: {{ .Values.deployment.container.port }}
+              protocol: TCP
+          livenessProbe:
+            httpGet:
+              path: /health/
+              port: http
+          readinessProbe:
+            httpGet:
+              path: /health/
+              port: http
+          env:
+          {{- if ne (.Values.deployment.container.port | int) (8080 | int) }}
+          - name: PORT
+            value: "{{ .Values.deployment.container.port }}"
+          {{- end }}
+          {{- with .Values.deployment.resources }}
+          resources:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+      {{- with .Values.deployment.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.deployment.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.deployment.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}

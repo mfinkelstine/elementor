@@ -1,0 +1,21 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: elementor-flask-deployment
+spec:
+  selector:
+    matchLabels:
+      app: elementor-flask-deployment
+  replicas: 2 # tells deployment to run 2 pods matching the template
+  template:
+    metadata:
+      labels:
+        app: elementor-flask-deployment
+    spec:
+      containers:
+      - name: elementor-flask
+        image: meirfi/elementor:latest
+        ports:
+        - containerPort: 5000
+
+

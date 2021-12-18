@@ -1,0 +1,4 @@
+Flask==0.12
+Flask-RESTful==0.3.5
+flask_excel=0.0.7
+requests==2.26.0

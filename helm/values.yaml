@@ -1,0 +1,31 @@
+ingress:
+  configured: false
+  rewritePath: true
+  pathPrefix: ""
+
+service:
+  type: ClusterIP
+  port: 80
+
+deployment:
+  replicaCount: 2
+  container:
+    image:
+      repository: "meirfi/elementor:latest"
+      tag: "" # uses chart appVersion if not provided
+      pullPolicy: IfNotPresent
+    port: 8080
+
+  resources: 
+    limits:
+       cpu: 100m
+       memory: 64Mi
+    requests:
+       cpu: 100m
+       memory: 64Mi
+  resources: {}
+
+  tolerations: []
+
+  affinity: {}
+
